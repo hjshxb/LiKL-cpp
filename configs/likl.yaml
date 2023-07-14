@@ -1,0 +1,14 @@
+%YAML:1.0
+
+Feature:
+  model_path: "/mnt/e/likl.pt.torchscript"
+  max_keypoints: 1000
+  keypoints_threshold: 0.5
+  tensor_width: 512
+  tensor_height: 512
+  grid_size: 8
+  cross_ratio: 2
+  nms_type: "RangeTree"
+  line_threshold: 0.3
+  max_num_sample: 5
+  min_sample_dist: 8
