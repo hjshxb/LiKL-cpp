@@ -40,6 +40,7 @@ void FeatureParams::ParseParam(const cv::FileNode& file_node) {
     GetNodeValue(file_node, "tensor_width", tensor_width_);
     GetNodeValue(file_node, "tensor_height", tensor_height_);
     GetNodeValue(file_node, "line_threshold", line_threshold_);
+    GetNodeValue(file_node, "min_line_length", min_line_length_);
     GetNodeValue(file_node, "max_num_sample", max_num_sample_),
     GetNodeValue(file_node, "min_sample_dist", min_sample_dist_);
 

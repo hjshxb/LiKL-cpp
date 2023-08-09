@@ -176,6 +176,7 @@ std::vector<cv::KeyPoint> KdTree(const std::vector<cv::KeyPoint>& keyPoints,
         (sol1 > sol2) ? sol1 : sol2;  // binary search range initialization with
                                       // positive solution
     int low = floor(sqrt((double)keyPoints.size() / numRetPoints));
+    low = std::max(1, low);
 
     PointCloud<int> cloud;  // creating k-d tree with keypoints
     generatePointCloud(cloud, keyPoints);
@@ -270,6 +271,7 @@ std::vector<cv::KeyPoint> RangeTree(const std::vector<cv::KeyPoint>& keyPoints,
         (sol1 > sol2) ? sol1 : sol2;  // binary search range initialization with
                                       // positive solution
     int low = floor(sqrt((double)keyPoints.size() / numRetPoints));
+    low = std::max(1, low);
 
     rangetree<u16, u16> treeANMS(
         keyPoints.size(),
@@ -359,6 +361,7 @@ std::vector<cv::KeyPoint> Ssc(const std::vector<cv::KeyPoint>& keyPoints,
         (sol1 > sol2) ? sol1 : sol2;  // binary search range initialization with
                                       // positive solution
     int low = floor(sqrt((double)keyPoints.size() / numRetPoints));
+    low = std::max(1, low);
 
     int width;
     int prevWidth = -1;

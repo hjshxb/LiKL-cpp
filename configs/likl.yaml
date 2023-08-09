@@ -8,7 +8,8 @@ Feature:
   tensor_height: 512
   grid_size: 8
   cross_ratio: 2
-  nms_type: "RangeTree"
+  nms_type: "ssc"
   line_threshold: 0.3
+  min_line_length: 5
   max_num_sample: 5
   min_sample_dist: 8

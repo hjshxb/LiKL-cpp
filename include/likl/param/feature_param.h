@@ -19,6 +19,7 @@ public:
             tensor_height_(),
             tensor_width_(),
             line_threshold_(),
+            min_line_length_(),
             max_num_sample_(),
             min_sample_dist_()
             {}
@@ -44,6 +45,7 @@ public:
     int tensor_height_;
     int tensor_width_;
     float line_threshold_;
+    float min_line_length_;
     float max_num_sample_;
     float min_sample_dist_;
 

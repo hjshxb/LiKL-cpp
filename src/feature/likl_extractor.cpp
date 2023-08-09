@@ -380,6 +380,19 @@ void LiKL::GetLines(
     end_points.select(1, 0).mul_(2 * scale_height).clamp_(0, img_size.height - 1);
     end_points.select(1, 1).mul_(2 * scale_width).clamp_(0, img_size.width - 1);
 
+    // Filter using line length
+    float min_length = params_.min_line_length_;
+    if (min_length < 1.0) {
+        min_length *= std::min(img_size.height, img_size.width);
+    }
+    if (min_length > 0) {
+        torch::Tensor line_length = torch::norm(start_points - end_points, 2, {-1});
+        std::vector<torch::Tensor> length_valid = torch::where(line_length > min_length);
+        center_pos = center_pos.index({length_valid[0]});
+        start_points = start_points.index({length_valid[0]});
+        end_points  = end_points.index({length_valid[0]});        
+    }
+
     start_points = start_points.cpu();
     end_points = end_points.cpu();
     auto start_points_data = start_points.accessor<float, 2>();
