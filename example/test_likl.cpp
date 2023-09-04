@@ -48,7 +48,8 @@ int main(int argc, char** argv) {
                 vec_line_mask,
                 vec_detect_mask);
     auto time = likl::utils::Timer::toc(t1);
-    std::cout << "lkle detect time = " << time.count() << " ms " << std::endl;
+    std::cout << "likl detect time = " 
+            << static_cast<double>(time.count()) / vec_img.size() << " ms(per image)" << std::endl;
 
     cv::Mat feature_img(cv::Size(input_img.cols * 2, input_img.rows), CV_8UC3);
     cv::Mat feature_img_roi1 = feature_img.colRange(0, input_img.cols);
