@@ -30,7 +30,7 @@ void DrawLineMatch(const cv::Mat& img1,
                    const std::vector<cv::Vec4f>& lines1,
                    const cv::Mat& img2,
                    const std::vector<cv::Vec4f>& lines2,
-                   std::vector<std::pair<int, float>> line_matches,
+                   const std::vector<std::pair<int, float>>& line_matches,
                    cv::OutputArray out_img,
                    int thickness = 2, 
                    int lineType = 16);

@@ -21,6 +21,9 @@ public:
                const cv::Mat& train_mask,
                std::vector<std::pair<int, float>>& matches) const;
     
+    static void ToDmatch(const std::vector<std::pair<int, float>>& matches, 
+                         std::vector<cv::DMatch>& Dmatches);
+    
     /**
      * @brief:  The implementation of the Needleman-Wunsch algorithm 
      *          to get descriptor score

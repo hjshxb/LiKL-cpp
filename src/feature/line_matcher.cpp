@@ -222,4 +222,15 @@ float WunschLineMatcher::DescriptorScore(
     return nw_grid(rows, cols);
 }
 
+void WunschLineMatcher::ToDmatch(
+            const std::vector<std::pair<int, float>>& matches, 
+            std::vector<cv::DMatch>& Dmatches) {
+    Dmatches.clear();
+    for (size_t i = 0; i < matches.size(); i++) {
+        if (matches[i].first != -1) {
+            Dmatches.emplace_back(i, matches[i].first, matches[i].second);
+        }
+    }
+}
+
 } // namespace likl

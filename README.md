@@ -41,7 +41,7 @@ make
 ```
 
 ### 3. Download the converted TorchScript model
-You can download from [Google Drive](https://drive.google.com/file/d/1rzKBShAbdSs-tcOHJE_ly5VBQGFmctSq/view?usp=sharing)
+You can download from [Google Drive](https://drive.google.com/file/d/1rzKBShAbdSs-tcOHJE_ly5VBQGFmctSq/view?usp=sharing)\
 You can also convert pytorch model to torchcript. Please refer to [LiKL](https://github.com/hjshxb/LiKL/).
 
 ### 4. demo
