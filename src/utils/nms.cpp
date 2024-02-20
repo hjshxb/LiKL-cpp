@@ -51,12 +51,63 @@ std::vector<cv::KeyPoint> AdaptiveNMS::run(
             nms_kpts = anms::Ssc(sort_kpts, num_retPoints, tolerance, cols, rows);
             break;
         }
+        case AnmsAlgorithmType::Binning: {
+            nms_kpts = binning(sort_kpts, num_retPoints, cols, rows, 50, 12);
+            break;
+        }
         default:
             LOG(WARNING) << "Unknown nms algorithm...";
             break;
     }
     return nms_kpts;
 
+}
+
+std::vector<cv::KeyPoint> AdaptiveNMS::binning(
+    const std::vector<cv::KeyPoint>& keyPoints,
+    const int& numKptsToRetain,
+    const int& imgCols,
+    const int& imgRows,
+    const int& nr_horizontal_bins,
+    const int& nr_vertical_bins) const{
+  if (static_cast<size_t>(numKptsToRetain) > keyPoints.size()) {
+    return keyPoints;
+  }
+
+  float binRowSize = float(imgRows) / float(nr_vertical_bins);
+  float binColSize = float(imgCols) / float(nr_horizontal_bins);
+
+  // Note: features should be already sorted by score at this point from detect
+
+  // 0. count the number of valid bins (as specified by the user in the yaml
+  // TODO： set binning_mask using param
+  Eigen::MatrixXd binning_mask = Eigen::MatrixXd::Ones(nr_vertical_bins, nr_horizontal_bins);
+  float nrActiveBins = binning_mask.sum();  // sum of 1's in binary mask
+
+  // 1. compute how many features we want to retain in each bin
+  // numRetPointsPerBin
+  const int numRetPointsPerBin =
+      std::round(float(numKptsToRetain) / float(nrActiveBins));
+
+  // 2. assign keypoints to bins and retain top numRetPointsPerBin for each bin
+  std::vector<cv::KeyPoint> binnedKpts;  // binned keypoints we want to output
+  Eigen::MatrixXd nrKptsInBin = Eigen::MatrixXd::Zero(
+      nr_vertical_bins,
+      nr_horizontal_bins);  // store number of kpts for each bin
+  for (size_t i = 0; i < keyPoints.size(); i++) {
+    const size_t binRowInd =
+        static_cast<size_t>(keyPoints[i].pt.y / binRowSize);
+    const size_t binColInd =
+        static_cast<size_t>(keyPoints[i].pt.x / binColSize);
+    // if bin is active and needs more keypoints
+    if (binning_mask(binRowInd, binColInd) == 1 &&
+        nrKptsInBin(binRowInd, binColInd) <
+            numRetPointsPerBin) {  // if we need more kpts in that bin
+      binnedKpts.push_back(keyPoints[i]);
+      nrKptsInBin(binRowInd, binColInd) += 1;
+    }
+  }
+  return binnedKpts;
 }
 
 

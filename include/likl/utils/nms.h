@@ -1,5 +1,6 @@
 #pragma once 
 
+#include <Eigen/Core>
 /**
  * For more details, please refer to https://github.com/BAILOOL/ANMS-Codes/tree/master
 */
@@ -20,6 +21,14 @@ public:
         float tolerance,
         int cols,
         int rows) const;
+    
+    std::vector<cv::KeyPoint> binning(
+        const std::vector<cv::KeyPoint>& keyPoints,
+        const int& numKptsToRetain,
+        const int& imgCols,
+        const int& imgRows,
+        const int& nr_horizontal_bins,
+        const int& nr_vertical_bins) const;
 
 private:
     AnmsAlgorithmType anms_algorithm_type_;

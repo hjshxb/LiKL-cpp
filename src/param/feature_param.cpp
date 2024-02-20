@@ -21,9 +21,11 @@ const AnmsAlgorithmType String2AnmsAlgorithmType(const std::string& nms_type) {
         return AnmsAlgorithmType::RangeTree;
     } else if (lower_nms_type == "ssc") {
         return AnmsAlgorithmType::Ssc;
+    } else if (lower_nms_type == "binning") {
+        return AnmsAlgorithmType::Binning;
     } else {
         LOG(FATAL) << "Invalid nms type, Valid nms types are"
-                   << "  topn sdc kdtree rangetree ssc";
+                   << "  topn sdc kdtree rangetree ssc binning";
     }
 }
 

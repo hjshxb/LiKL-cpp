@@ -41,7 +41,8 @@ make
 ```
 
 ### 3. Download the converted TorchScript model
-You can download from [Baidu (y3yu) ](https://pan.baidu.com/s/1gIeHr6EWJF-80i0sGX-lYQ)
+You can download from [Baidu (y3yu) ](https://pan.baidu.com/s/1gIeHr6EWJF-80i0sGX-lYQ) or [Onedrive](https://1drv.ms/u/s!Ah0c5cK_vtly10KVn5ypGBM_sBRS?e=frMbm8).
+
 You can also convert pytorch model to torchcript. Please refer to [LiKL](https://github.com/hjshxb/LiKL/).
 
 ### 4. demo

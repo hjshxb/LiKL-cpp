@@ -11,7 +11,8 @@ enum class AnmsAlgorithmType {
     Sdc = 2,
     KdTree = 3,
     RangeTree = 4,
-    Ssc = 5
+    Ssc = 5,
+    Binning = 6
 };
 
 }  // namespace likl
