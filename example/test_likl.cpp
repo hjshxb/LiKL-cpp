@@ -47,6 +47,7 @@ int main(int argc, char** argv) {
                 vec_line_desc,
                 vec_line_mask,
                 vec_detect_mask);
+    torch::cuda::synchronize();
     auto time = likl::utils::Timer::toc(t1);
     std::cout << "likl detect time = " 
             << static_cast<double>(time.count()) / vec_img.size() << " ms(per image)" << std::endl;
@@ -92,6 +93,7 @@ int main(int argc, char** argv) {
                        vec_line_mask[0],
                        vec_line_mask[1],
                        line_matches);
+    torch::cuda::synchronize();
     time = likl::utils::Timer::toc(t1);
     std::cout << "line match time = " << time.count() << " ms " << std::endl;
 
