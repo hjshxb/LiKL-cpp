@@ -45,6 +45,7 @@ void FeatureParams::ParseParam(const cv::FileNode& file_node) {
     GetNodeValue(file_node, "min_line_length", min_line_length_);
     GetNodeValue(file_node, "max_num_sample", max_num_sample_),
     GetNodeValue(file_node, "min_sample_dist", min_sample_dist_);
+    GetNodeValue(file_node, "dla_core", dla_core_);
 
     // It needs to be ensured to be a multiple of 32
     if (tensor_height_ % 32 != 0) {
@@ -70,7 +71,8 @@ void FeatureParams::Print() const {
                   "tensor_height", tensor_height_,
                   "line_threshold", line_threshold_,
                   "max_num_sample", max_num_sample_,
-                  "min_sample_dist", min_sample_dist_);
+                  "min_sample_dist", min_sample_dist_,
+                  "dla_core", dla_core_);
     LOG(INFO) << ss.str();
 }
 

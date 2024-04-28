@@ -21,7 +21,8 @@ public:
             line_threshold_(),
             min_line_length_(),
             max_num_sample_(),
-            min_sample_dist_()
+            min_sample_dist_(),
+            dla_core_()
             {}
 
     virtual ~FeatureParams() = default;
@@ -48,6 +49,9 @@ public:
     float min_line_length_;
     float max_num_sample_;
     float min_sample_dist_;
+
+    // For TensorRT
+    int dla_core_;
 
 };
 

@@ -1,11 +1,11 @@
 %YAML:1.0
 
 Feature:
-  model_path: "/mnt/e/likl.pt.torchscript"
+  model_path: "/home/hxb/experiments/likl.pt.torchscript" # /home/hxb/experiments/likl.onnx
   max_keypoints: 1000
   keypoints_threshold: 0.5
-  tensor_width: 512
-  tensor_height: 512
+  tensor_width: 480
+  tensor_height: 480
   grid_size: 8
   cross_ratio: 2
   nms_type: "ssc"
@@ -13,3 +13,4 @@ Feature:
   min_line_length: 5
   max_num_sample: 5
   min_sample_dist: 8
+  dla_core: -1

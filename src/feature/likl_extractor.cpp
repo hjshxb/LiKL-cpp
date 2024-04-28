@@ -10,16 +10,29 @@ namespace likl {
 
 LiKL::LiKL(const FeatureParams& params, const torch::DeviceType& device)
         : params_(params), device_(device) {
-    // Loading the model
+
+#ifdef WITH_TENSORRT
+
+    //Loading TensorRT engine
+    LOG(INFO)<< "Loading TensorRT engine";
+    module_ = std::make_shared<TensorRTInference>(params_.model_path_, "input", params_.dla_core_);
+    module_->Build();
+    
+#else
+
+    // Loading the torchscript model
     try {
         module_ = torch::jit::load(params_.model_path_);
     }
     catch (const c10::Error& e) {
-        LOG(ERROR) << "Error loading the model";
+        LOG(ERROR) << "Error loading the model\n" 
+                   << e.msg();
         std::exit(EXIT_FAILURE);
     }
     module_.to(device);
     module_.eval();
+
+#endif
     
 }
 
@@ -212,6 +225,21 @@ void LiKL::Forward(
         }
     }
 
+#ifdef WITH_TENSORRT
+    std::vector<torch::Tensor> vec_line_map(input_imgs.size());
+    std::vector<torch::Tensor> vec_point_map(input_imgs.size());
+    std::vector<torch::Tensor> vec_desc_map(input_imgs.size());
+
+    // Only `batch_size = 1` is supported.
+    for (size_t i = 0; i < input_imgs.size(); ++i) {
+        module_->Infer(input_imgs[i], vec_line_map[i], vec_point_map[i], vec_desc_map[i]);
+    }
+
+    line_maps = torch::cat(vec_line_map, 0);
+    point_maps = torch::cat(vec_point_map, 0);
+    desc_maps = torch::cat(vec_desc_map, 0);
+
+#else
     cv::Mat batch_img;
     cv::vconcat(input_imgs, batch_img);
     torch::Tensor tensor_img = torch::from_blob(batch_img.data, 
@@ -222,9 +250,12 @@ void LiKL::Forward(
     tensor_img = tensor_img.permute({0, 3, 1, 2}).to(torch::kFloat) / 127.5 - 1;
 
     auto output = module_.forward({tensor_img}).toGenericDict();
-    point_maps = output.at("points_pred").toTensor();
     line_maps = output.at("line_pred").toTensor();
+    point_maps = output.at("points_pred").toTensor();
     desc_maps = output.at("desc_pred").toTensor();
+
+#endif
+
 }
 
 void LiKL::GetKeypoints(
@@ -237,7 +268,7 @@ void LiKL::GetKeypoints(
     torch::Tensor center_shift = torch::tanh(point_maps.slice(1, 1, 3)).squeeze(0);
     float step = (params_.grid_size_ - 1) / 2.0f;
     cv::Size grid_size(point_maps.size(3), point_maps.size(2));
-    torch::Tensor center_base = CreateImageGrid(grid_size).to(device_);
+    torch::Tensor center_base = CreateImageGrid(grid_size).to(scores.device());
     center_base.mul_(params_.grid_size_).add_(step);
     torch::Tensor coords =
         center_base + center_shift.mul_(params_.cross_ratio_ * step);
@@ -294,7 +325,7 @@ void LiKL::ComputeDescriptors(
         grid_vec.emplace_back(grid_x - 1);
         grid_vec.emplace_back(grid_y - 1);
     }
-    auto ops = torch::TensorOptions().dtype(torch::kFloat);
+    auto ops = torch::TensorOptions().dtype(torch::kFloat32);
     torch::Tensor grid_tensor = torch::from_blob(grid_vec.data(), {1, num_keypoints, 1, 2}, ops);
 
     _ComputeDescriptorsImpl(desc_map, grid_tensor, descriptors);
@@ -336,10 +367,10 @@ void LiKL::_ComputeDescriptorsImpl(
     descs = descs.permute({0, 2, 3, 1}).reshape({num_keypoints, -1});
     descs = torch::nn::functional::normalize(descs, F::NormalizeFuncOptions().p(2).dim(1));
     
-    descs = descs.cpu().contiguous();
+    descs = descs.cpu();
     descriptors = cv::Mat(cv::Size(descs.size(1), descs.size(0)), 
                           CV_32FC1, 
-                          descs.data_ptr<float>()).clone();
+                          descs.contiguous().data_ptr<float>()).clone();
 }
 
 void LiKL::GetLines(

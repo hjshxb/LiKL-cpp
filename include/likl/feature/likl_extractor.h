@@ -5,6 +5,12 @@
 
 #include "likl/param/feature_param.h"
 
+#ifdef WITH_TENSORRT
+
+#include "likl/feature/tensorrt_infer.h"
+
+#endif
+
 namespace likl {
 
 class LiKL {
@@ -83,8 +89,13 @@ private:
 
 private:
     const FeatureParams params_;
-    torch::jit::Module module_;
     torch::Device device_;
+
+#ifdef WITH_TENSORRT
+    std::shared_ptr<TensorRTInference> module_;
+#else
+    torch::jit::Module module_;
+#endif
 
 
 };
